@@ -1,39 +1,41 @@
-import { TiketService } from "../service/tiket.service.js"
+import { ticketService } from '../repositories/index.js'
+import { logger } from '../helpers/logger.js';
 
-
-export class TiketController {
+export class TicketController {
     
-    static createTiket = async (req, res) => {
+    static createTicket = async (req, res) => {
+
         try {
-            console.log('createTiket controller');
-            const tiketBody = req.body;
-            const newTiket = await TiketService.createTiket(tiketBody);
-            res.json({ message: "Tiket creado", data: newTiket });
+            const ticketBody = req.body;
+            const newTicket = await ticketService.createTicket(ticketBody);
+            logger.info('Ticket creado', newTicket);
+            res.json({ message: "Ticket creado", data: newTicket });
             
         } catch (error) {
+            logger.error('error createTicket controller', error.message);
             res.json({ status: "error", message: error.message });
         }
     }
-    static getTiket = async (req, res) => {
+    static getTicket = async (req, res) => {
         try {
-            console.log('getTiket controller');
-            const tiket = await TiketService.getTiket();
-            res.json({ message: "Listado de tikets", data: tiket });
+            const tickets = await ticketService.getTicket();
+            logger.info('Listado de tickets', tickets);
+            res.json({ message: "Listado de tickets", data: tickets });
             
         } catch (error) {
-            console.log('error getTiket controller', error.message);
+            logger.error('error getTicket controller', error.message);
             res.json({ status: "error", message: error.message });
         }
     }
-    static getTiketById = async (req, res) => {
+    static getTicketById = async (req, res) => {
         try {
-            console.log('getTiketById controller');
-            const tiketId = req.params.id;
-            const tiket = await TiketService.getTiketById(tiketId);
-            res.json({ message: "Listado de tikets", data: tiket });
+            const ticketId = req.params.id;
+            const ticket = await ticketService.getTicketById(ticketId);
+            logger.info('Ticket encontrado', ticket);
+            res.json({ message: "Ticket encontrado", data: ticket });
             
         } catch (error) {
-            console.log('error getTiketById controller', error.message);
+            logger.error('error getTiketById controller', error.message);
             res.json({ status: "error", message: error.message });
         }
     }

@@ -7,6 +7,7 @@ import path from "path";
 import { ProductsService } from './service/products.service.js';
 import { ChatService } from './service/chat.service.js';
 import {errorHandler } from './middlewares/errors/errorHandler.js';
+import { logger } from "./helpers/logger.js";
 
 import {engine} from "express-handlebars";
 import {Server} from "socket.io";
@@ -41,7 +42,8 @@ app.use(cookieParser());
 
 //configuramos websockets del lado del servidor (backend), vinculando el servidor http con el servidor de websocket.
 //servidor de http
-const httpServer = app.listen(port, () => console.log(`Servidor OK, puerto: ${port}`)); //con el metodo "listen" escuchamos ese punto de acceso "8080"
+const httpServer = app.listen(port, () => { logger.info(`app listening at http://localhost:${port}`);  }); 
+//con el metodo "listen" escuchamos ese punto de acceso "8080"
 //servidor de websocket
 const io = new Server(httpServer)
 //conexxion a la Base de Datos
@@ -76,7 +78,7 @@ io.on("connection", async (socket)=> {
         socket.emit("productsArray", products)
 
         } catch (error) {
-            console.log('Error al obtener los productos', error.message);
+            logger.error("Error al obtener los productos", error.message);
             
         }
     
@@ -94,7 +96,7 @@ io.on("connection", async (socket)=> {
             io.emit("productsArray", products)
 
             } catch (error) {
-                    console.error('Error al crear un producto:', error.message);
+                logger.error("Error al crear un producto:", error.message);
             }    
         });
 
@@ -110,7 +112,7 @@ io.on("connection", async (socket)=> {
             socket.emit('productsArray', updatedProducts);
             } catch (error) {
                 // Manejar errores, por ejemplo, si el producto no se encuentra
-                console.error('Error al eliminar un producto:', error.message);
+                logger.error("Error al eliminar un producto:", error.message);
             }
         });
 
@@ -131,7 +133,7 @@ io.on("connection", async (socket)=> {
             io.emit('chatHistory', msg);//envio el mensaje
             
         } catch (error) {
-            console.error('Error al enviar el mensaje:', error.message);
+            logger.error("Error al eliminar el mensaje:", error.message);
         }
 
     })

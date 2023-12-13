@@ -1,4 +1,5 @@
 import { chatsModel } from "./models/chatsModel.js";
+import { logger } from "../../../helpers/logger.js";
 
 
 export class ChatsManagerMongo{
@@ -14,7 +15,7 @@ export class ChatsManagerMongo{
                         return message
 
                     }catch(error){
-                        console.log("addMessage", error.message);
+                        logger.error('add message', error.message);
                         throw new Error ("No se pudo agregar el mensaje");
                     };
                 };
@@ -25,7 +26,7 @@ export class ChatsManagerMongo{
                        
                         return messagesList
                     }catch (error){
-                        console.log("getMessage", error.message);
+                        logger.error('get chat', error.message);
                         throw new Error ("No se pudo conseguir el listado de mensajes")
                     };
                 };

@@ -1,6 +1,7 @@
 import {Router} from "express";//importamos "routes" desde la libreria de express
 import { authorization, jwtAuth } from '../middlewares/auth.js';
 import { ViewsController } from '../controller/views.controller.js';
+import { logger } from "../helpers/logger.js";
 
 const router = Router();
 
@@ -31,6 +32,13 @@ router.get('/products', jwtAuth, ViewsController.renderViewsProducts);
 router.get('/cart/:cid', ViewsController.renderViewsCart);
 
 //http://localhost:8080/mokingProducts
-router.get('/mokingProducts',ViewsController.mockingProducts)
+router.get('/mokingProducts',ViewsController.mockingProducts);
+
+//http://localhost:8080/loggerTest
+router.get("/loggerTest", (req, res) => {
+    logger.info("prueba de info");
+    logger.warn("prueba de warn");
+    res.send("prueba de logger");
+});
 
 export {router as viewsRouter};//lo exportamos para poder importarlo en "app.js".

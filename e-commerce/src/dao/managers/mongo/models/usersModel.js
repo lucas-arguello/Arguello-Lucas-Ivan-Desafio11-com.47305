@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { cartsDao } from '../../../factory.js';
+import { logger } from '../../../../helpers/logger.js';
 
 const usersCollection = 'users';
 
@@ -40,6 +41,7 @@ userSchema.pre('save', async function(next) {
         const newCart = await cartsDao.createCart({});
         this.cart = newCart._id
     } catch (error) {
+        logger.error('error al crear el carrito con el usuario',error)
         next(error)
     }
 })

@@ -1,5 +1,4 @@
 import {Router} from "express";//importamos "routes" desde la libreria de express, para poder realizar el ruteo de los metodos.
-
 import { ProductsController } from '../controller/products.controller.js'; 
 import { authorization, jwtAuth } from '../middlewares/auth.js';//importacion del middleware de autorizacion de roles y validacion de usuario
 

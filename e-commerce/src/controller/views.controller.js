@@ -9,7 +9,7 @@ export class ViewsController {
             console.log('ususario logueado', req.user);
             //si no esta logeado lo redirige a login
             if(!req.user){
-                console.log('error al iniciar sesion');
+                logger.Error('error al iniciar sesion');
                 res.render('login', 
                 { 
                     style: "login.css",
@@ -25,9 +25,11 @@ export class ViewsController {
                         style: "home.css",
                         message: 'No hay productos'
                     });
+                    logger.console.error('No hay productos');
                     throw new Error('No hay productos');
                 }
                 if(req.user.role === 'admin'){
+                    logger.info('ususario logueado', req.user);
                     res.render('home', 
                     { 
                         style: "home.css",
@@ -40,6 +42,7 @@ export class ViewsController {
                     });
                     
                 }else{
+                    logger.info('ususario logueado', req.user);
                     res.render('home', 
                     {
                         style: "home.css",
@@ -51,26 +54,31 @@ export class ViewsController {
                     });
                 }
             }
-    
+            logger.info('ususario logueado', req.user);
         } catch (error) {
-           res.status(500).json({ message: error.message }); 
+            logger.error('error al renderizar home', error.message);
+            res.status(500).json({ message: error.message }); 
         }
        
     }
 
     static renderViewsLogin = async (req, res) => {
         try {
+            logger.info('renderizo login');
             res.render('login', { style: "login.css"});
         } catch (error) {
+            logger.error('error al renderizar login', error.message);
             res.status(500).json({ message: error.message });
         }
     }
 
     static renderViewsRegister = async (req, res) => {
         try {
-            //console.log(req.body);
+            
+            logger.info('renderizo register');
             res.render('register', { style: "register.css"});
         } catch (error) {
+            logger.error('error al renderizar register', error.message);
             res.status(500).json({ message: error.message });
         }
     }
@@ -78,6 +86,7 @@ export class ViewsController {
     static renderViewsProfile = async (req, res) => { //agrego JWT y saco session
         try {
             if(!req.user){
+                logger.Error('error al iniciar sesion');
                 res.render('login', 
                 { 
                     style: "login.css",
@@ -85,6 +94,7 @@ export class ViewsController {
                 })
             }else{  
                 if(req.user.age === 0 && req.user.role === 'admin'){
+                    logger.info('ususario logueado, renderizo profile', req.user);
                     //usuario admin
                     res.render('profile', 
                     {
@@ -96,6 +106,7 @@ export class ViewsController {
                         message: 'Se ha registrado con exito'
                     })
                 }else if(req.user.age === 0 && req.user.role === 'Usuario' ) {
+                    logger.info('ususario logueado, renderizo profile', req.user);
                     //usuario github                
                     res.render('profile', 
                     {
@@ -108,6 +119,7 @@ export class ViewsController {
                         message: 'Se ha registrado con exito'
                     });
                 }else{
+                    logger.info('ususario logueado, renderizo profile', req.user);
                     //usuario registrado desde la page
                     res.render('profile', 
                     {
@@ -123,6 +135,7 @@ export class ViewsController {
                 }
             }
         } catch (error) {
+            logger.error('error al renderizar register', error.message);
             res.status(500).json({ message: error.message });
         }
     }
@@ -166,6 +179,7 @@ export class ViewsController {
     static renderViewsProducts = async (req, res) => {
         try {
             if(!req.user){
+                logger.Error('error al iniciar sesion');
                 res.render('login', 
                 { 
                     style: "login.css",
@@ -205,10 +219,12 @@ export class ViewsController {
                 }
                // console.log(dataProducts.payload)
                // console.log('Data del console log:', dataProducts.nextLink, dataProducts.prevLink)
+                logger.info('Productos paginados')
                 res.render('productsPaginate', dataProducts);
             }
     
         } catch (error) {
+            logger.error('error al renderizar products paginate', error.message);
             res.status(500).json({ message: error.message });
             
         }
@@ -230,6 +246,7 @@ export class ViewsController {
                 
             }
         } catch (error) {
+            logger.error('error al renderizar cart', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
@@ -241,9 +258,10 @@ export class ViewsController {
                 const items = generateProducts()
                 products.push(items)
             }
+            logger.info("moking products")
             res.json({status: "success", data: products})
         } catch (error) {
-            console.log('error mockingProducts controller', error.message);
+            logger.error('error mockingProducts controller', error.message);
             res.json( { status: "error", message: error.message });
         }
     }
