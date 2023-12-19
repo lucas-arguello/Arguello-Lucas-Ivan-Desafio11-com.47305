@@ -25,7 +25,7 @@ export const initializePassport = () => {
             const {first_name, last_name, age} = req.body
             try {
                 const user = await UsersSessionsService.getUserByEmail(username)
-                console.log('Usuario local', user)
+                //console.log('Usuario local', user)
                 
                 if(user){//null: que no hubo error, false: ya existe, un mensaje
                     //el usuario ya existe
@@ -41,7 +41,7 @@ export const initializePassport = () => {
                     password: createHash(password),
                     role: 'Usuario'
                 }
-                console.log(newUser)
+                //console.log(newUser)
                 //creo un nuevo usuario
                 const userCreated = await UsersSessionsService.createUsers(newUser)
                
@@ -88,7 +88,7 @@ export const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log('Perfil', profile)
+                //console.log('Perfil', profile)
                 const user = await UsersSessionsService.getUserByEmail(profile._json.email)
                 if(user){
                     return done(null, user)

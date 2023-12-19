@@ -1,4 +1,4 @@
-import { ProductsService} from '../service/products.service.js'
+import { productsService} from '../repositories/index.js'
 import { CustomError } from '../service/errors/customErrors.js';
 import { generateProductErrorInfo } from '../service/errors/infoDictionary.js';
 import { EError } from '../service/errors/enums.js';
@@ -20,7 +20,7 @@ export class ProductsController {
                 })
             }
             const product = req.body;
-            const newProduct = await ProductsService.createProduct(product);
+            const newProduct = await productsService.createProduct(product);
             res.json({ status: 'success', message: "Producto creado", data: newProduct });
 
         } catch (error) {
@@ -32,7 +32,7 @@ export class ProductsController {
     static getProducts = async (req, res) => {
         try {
             logger.info('paso por getProducts controller');
-            const products = await ProductsService.getProducts()
+            const products = await productsService.getProducts()
             const limit = req.query.limit;//creamos el query param "limit". ej: localhost:8080/api/products?limit=2
                 
         if(limit){
@@ -60,7 +60,7 @@ export class ProductsController {
             //parseamos el valor recibido (como string) de la peticion, a valor numerico, para poder compararlo.
             const productId = req.params.pid;
             //con el "productService", llamamos el metodo "getProductById" y le pasamos el Id que habiamos parseado. 
-            const products = await ProductsService.getProductById(productId);
+            const products = await productsService.getProductById(productId);
             logger.info('Lista de productos', products);
     
             res.json({message:"El producto seleccionado es: ", data:product});
@@ -76,7 +76,7 @@ export class ProductsController {
         try {
             const productId = req.params.pid;
             const updatedFields = req.body;
-            const product= await ProductsService.updateProduct(productId, updatedFields);
+            const product= await productsService.updateProduct(productId, updatedFields);
             res.json({ message: "Producto actualizado correctamente", data: product});
             logger.info('Producto actualizado', updatedFields);
         } catch (error) {
@@ -89,7 +89,7 @@ export class ProductsController {
         try {
             
             const productId = req.params.pid;
-            const product = await ProductsService.deleteProduct(productId);
+            const product = await productsService.deleteProduct(productId);
             logger.info('Producto eliminado', product);
             if (product === null) {
                 res.json({ status: "error", message: "No se encontró el producto a eliminar" });

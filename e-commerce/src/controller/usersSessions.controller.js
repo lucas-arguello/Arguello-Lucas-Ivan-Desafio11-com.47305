@@ -1,5 +1,6 @@
 import { generateToken } from "../utils.js";
 import { logger } from "../helpers/logger.js";
+import { error } from "console";
 
 export class UsersSessionsController {
     static renderRegister = async (req, res) => {
@@ -14,8 +15,8 @@ export class UsersSessionsController {
         res.render('register', {
             style: "register.css",
             error: 'Error al registrar el usuario'
-        }, logger.error('Fallo al registrar usuario')
-        );
+        } 
+        );logger.error(error.message);
     }
     static renderRegisterGithub = async (req, res) => {
         const user = req.user;
@@ -47,7 +48,7 @@ export class UsersSessionsController {
          style: "login.css",
          error: 'Para navegar debe iniciar sesion'
          }); 
-         logger.error('error al iniciar sesion');
+         logger.error(error.message);
      }
      static renderLogout = async (req, res) => {
         try {

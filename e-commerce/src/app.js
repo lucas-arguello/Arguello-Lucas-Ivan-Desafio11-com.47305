@@ -1,16 +1,16 @@
 import express from "express" // importamos el modulo "express" para poder usar sus metodos.
-import session from "express-session";
-import MongoStore from "connect-mongo";
+//import session from "express-session";
+//import MongoStore from "connect-mongo";
 import { __dirname } from "./utils.js";//importamos la variable "__dirname" que va servir como punto de acceso a los arch. desde "src"
 import path from "path";
-//import { productsService } from "./dao/index.js"; 
-import { ProductsService } from './service/products.service.js';
-import { ChatService } from './service/chat.service.js';
+import {engine} from "express-handlebars";
+import {Server} from "socket.io";
 import {errorHandler } from './middlewares/errors/errorHandler.js';
 import { logger } from "./helpers/logger.js";
 
-import {engine} from "express-handlebars";
-import {Server} from "socket.io";
+//import { productsService } from "./dao/index.js"; 
+import { productsService, chatService } from "./repositories/index.js";
+
 import { config } from './config/config.js';
 
 import { connectDB } from "./config/dbConection.js";
@@ -29,7 +29,7 @@ import { cartsRouter } from "./routes/carts.routes.js";// importamos la ruta "ca
 import { usersSessionsRouter } from "./routes/usersSessions.routes.js";//importamos la ruta de "users"
 
 
-const port = 8080; //creamos el puerto de acceso, donde se va ejecutar el servidor.
+const port = config.server.port; //configuro puerto.
 
 const app = express(); //creamos el servidor. Aca tenemos todas las funcionalidades que nos ofrece el modulo "express".
 
@@ -73,7 +73,7 @@ io.on("connection", async (socket)=> {
 
     try{
         //Obtengo los productos 
-        const products = await ProductsService.getProducts();
+        const products = await productsService.getProducts();
         //y los envio al cliente
         socket.emit("productsArray", products)
 
@@ -87,11 +87,11 @@ io.on("connection", async (socket)=> {
     socket.on("addProduct",async (productData) =>{
         try{    
             //creamos los productos
-            const createProduct = await ProductsService.createProduct(productData);
+            const createProduct = await productsService.createProduct(productData);
 
             console.log(createProduct);
             //obtenemos los productos
-            const products = await ProductsService.getProducts();
+            const products = await productsService.getProducts();
             //mostramos los productos
             io.emit("productsArray", products)
 
@@ -105,9 +105,9 @@ io.on("connection", async (socket)=> {
     socket.on("deleteProduct", async (productId) => {
         try {
             // Eliminar el producto de la lista de productos por su ID
-            await ProductsService.deleteProduct(productId);
+            await productsService.deleteProduct(productId);
             // Obtener la lista actualizada de productos
-            const updatedProducts = await ProductsService.getProducts();
+            const updatedProducts = await productsService.getProducts();
             // Emitir la lista actualizada de productos al cliente
             socket.emit('productsArray', updatedProducts);
             } catch (error) {
@@ -119,16 +119,16 @@ io.on("connection", async (socket)=> {
 //Recibimos los mensajes desde el socketClient de "chats.js".
      
     //traigo todos los chat
-    const msg = await ChatService.getMessages()
+    const msg = await chatService.getMessages()
     //emito los caht 
     socket.emit("chatHistory", msg)
     //recibo mensaje de cada usuario desde el cliente
     socket.on('msgChat', async (messageClient) => {//recibo el mensaje del front
         try {
             //creo los chat en la base de datos
-            await ChatService.createMessage(messageClient);
+            await chatService.createMessage(messageClient);
             //obtengo y actualizo los mensajes
-            const msg = await ChatService.getMessages();
+            const msg = await chatService.getMessages();
             //replico y envio el mensaje a todos los usuarios
             io.emit('chatHistory', msg);//envio el mensaje
             
